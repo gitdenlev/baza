@@ -1,0 +1,101 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+enum SharePermission {
+  VIEWER
+  EDITOR
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  files           File[]
+  sharesGiven     FileShare[]     @relation("ShareOwner")
+  sharesReceived  FileShare[]     @relation("ShareWith")
+  refreshTokens   RefreshToken[]
+}
+
+model File {
+  id           String   @id @default(uuid())
+
+  bucket       String
+  objectName   String   @unique
+
+  originalName String
+  displayName  String
+
+  size         Int
+  mimeType     String
+  extension    String?
+  etag         String?
+
+  isStarred    Boolean  @default(false)
+  starredAt    DateTime?
+  lastOpenedAt DateTime?
+  deletedAt    DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  shares       FileShare[]
+
+  @@index([userId, createdAt])
+  @@index([userId, updatedAt])
+  @@index([userId, deletedAt])
+  @@index([userId, isStarred])
+  @@index([userId, lastOpenedAt])
+}
+
+model FileShare {
+  id           String          @id @default(uuid())
+
+  fileId       String
+  file         File            @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  ownerId      String
+  owner        User            @relation("ShareOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  sharedWithId String
+  sharedWith   User            @relation("ShareWith", fields: [sharedWithId], references: [id], onDelete: Cascade)
+
+  permission   SharePermission @default(VIEWER)
+
+  revokedAt    DateTime?
+
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@unique([fileId, sharedWithId])
+  @@index([sharedWithId, createdAt])
+  @@index([ownerId, createdAt])
+  @@index([fileId, createdAt])
+  @@index([sharedWithId, revokedAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId])
+  @@index([expiresAt])
+}
