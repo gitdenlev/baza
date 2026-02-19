@@ -3,8 +3,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 enum SharePermission {
@@ -13,12 +14,13 @@ enum SharePermission {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String?
+  quotaBytes BigInt   @default(1073741824)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   files           File[]
   sharesGiven     FileShare[]     @relation("ShareOwner")
@@ -41,6 +43,7 @@ model File {
   etag         String?
 
   isStarred    Boolean  @default(false)
+  isDeleted    Boolean  @default(false)
   starredAt    DateTime?
   lastOpenedAt DateTime?
   deletedAt    DateTime?
@@ -52,6 +55,7 @@ model File {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   shares       FileShare[]
+  shareLinks   FileShareLink[]
 
   @@index([userId, createdAt])
   @@index([userId, updatedAt])
@@ -74,6 +78,8 @@ model FileShare {
 
   permission   SharePermission @default(VIEWER)
 
+  isStarred    Boolean         @default(false)
+
   revokedAt    DateTime?
 
   createdAt    DateTime        @default(now())
@@ -84,6 +90,22 @@ model FileShare {
   @@index([ownerId, createdAt])
   @@index([fileId, createdAt])
   @@index([sharedWithId, revokedAt])
+  @@index([sharedWithId, isStarred])
+}
+
+model FileShareLink {
+  id         String   @id @default(uuid())
+
+  fileId     String
+  file       File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  tokenHash  String   @unique
+  role       SharePermission @default(VIEWER)
+  isActive   Boolean  @default(true)
+
+  createdAt  DateTime @default(now())
+
+  @@index([fileId])
 }
 
 model RefreshToken {

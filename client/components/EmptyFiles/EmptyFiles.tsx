@@ -23,7 +23,7 @@ export function EmptyFiles({
   imageAlt: string;
 }) {
   return (
-    <Empty>
+    <Empty className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
       <EmptyHeader>
         <Image src={image} alt={imageAlt} width={150} height={150} />
         <EmptyTitle className="text-2xl">{title}</EmptyTitle>

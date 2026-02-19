@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MinioModule } from './minio/minio.module';
-import { LoginModule } from './login/login.module';
-
-
-
+import { FilesModule } from './files/files.module';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { StorageModule } from './storage/storage.module';
+import { ShareModule } from './share/share.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), MinioModule, LoginModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    FilesModule,
+    AuthModule,
+    StorageModule,
+    ShareModule,
+  ],
   controllers: [],
   providers: [],
 })

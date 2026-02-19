@@ -1,28 +1,28 @@
-import { Clock, Link2, Star, Trash2, HardDrive } from "lucide-react";
+import { Clock, Star, Trash2, HardDrive, UsersRound } from "lucide-react";
 
 export const sidebarItems = [
   {
-    label: "Мій диск",
+    label: "My Drive",
     href: "/",
     icon: HardDrive,
   },
   {
-    label: "Надано доступ",
+    label: "Shared with me",
     href: "/shared",
-    icon: Link2,
+    icon: UsersRound,
   },
   {
-    label: "Останні",
+    label: "Recent",
     href: "/latest",
     icon: Clock,
   },
   {
-    label: "Обрані",
+    label: "Starred",
     href: "/starred",
     icon: Star,
   },
   {
-    label: "Кошик",
+    label: "Trash",
     href: "/trash",
     icon: Trash2,
   },

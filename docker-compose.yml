@@ -11,6 +11,92 @@ services:
       - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+    networks:
+      - baza-network
+
+  minio:
+    image: minio/minio
+    container_name: baza-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: denys
+      MINIO_ROOT_PASSWORD: denys123
+    volumes:
+      - minio_data:/data
+    networks:
+      - baza-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: baza-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/baza?schema=public
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: denys
+      MINIO_SECRET_KEY: denys123
+      JWT_ACCESS_SECRET: baza-access-secret-change-me-in-production
+      JWT_REFRESH_SECRET: baza-refresh-secret-change-me-in-production
+      CLIENT_URL: http://localhost:3000
+      PORT: 3001
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - db
+      - minio
+    command: /bin/sh -c "npx prisma generate && npx prisma db push && npm run start:dev"
+    networks:
+      - baza-network
+
+  prisma-studio:
+    container_name: baza-prisma-studio
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: /bin/sh -c "npx prisma generate && npx prisma studio --port 5555 --hostname 0.0.0.0"
+    ports:
+      - "5555:5555"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/baza?schema=public
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - baza-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: baza-client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+    networks:
+      - baza-network
 
 volumes:
   pg_data:
+  minio_data:
+
+networks:
+  baza-network:
+    driver: bridge

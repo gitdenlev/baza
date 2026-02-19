@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "quotaBytes" BIGINT NOT NULL DEFAULT 1073741824;

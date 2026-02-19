@@ -5,7 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { uploadFile } from "@/lib/file.api";
 
-export const AddNewFileButton = () => {
+interface AddNewFileButtonProps {
+  onUploaded?: () => void;
+  parentPath?: string;
+}
+
+export const AddNewFileButton = ({
+  onUploaded,
+  parentPath,
+}: AddNewFileButtonProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -21,12 +29,13 @@ export const AddNewFileButton = () => {
 
     try {
       setIsUploading(true);
-      await uploadFile(file);
-      console.log("Файл завантажено");
+      await uploadFile(file, parentPath);
+      onUploaded?.();
     } catch (err) {
       console.error("Upload failed", err);
     } finally {
       setIsUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
     }
   };
 
@@ -36,7 +45,7 @@ export const AddNewFileButton = () => {
 
       <Button onClick={handleClick} disabled={isUploading}>
         <Plus className="h-4 w-4" />
-        {isUploading ? "Завантаження..." : "Додати"}
+        {isUploading ? "Uploading..." : "Upload"}
       </Button>
     </>
   );

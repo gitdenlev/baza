@@ -1,8 +1,10 @@
 export interface File {
   objectName: string;
   originalName: string;
-  name: string; // mapped for UI compatibility
+  name: string;
   lastModified: number | string;
   etag: string;
   size: number;
+  isStarred?: boolean;
+  ownerName?: string;
 }

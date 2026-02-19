@@ -11,17 +11,17 @@ export type OrderKey = "asc" | "desc";
 export const sortOptions: SortOption[] = [
   {
     value: "name",
-    label: "Назва",
-    orders: { asc: "Від А до Я", desc: "Від Я до А" },
+    label: "Name",
+    orders: { asc: "A to Z", desc: "Z to A" },
   },
   {
     value: "date",
-    label: "Дата",
-    orders: { asc: "Спочатку старі", desc: "Спочатку нові" },
+    label: "Date",
+    orders: { asc: "Oldest first", desc: "Newest first" },
   },
   {
     value: "size",
-    label: "Розмір",
-    orders: { asc: "Найменші", desc: "Найбільші" },
+    label: "Size",
+    orders: { asc: "Smallest first", desc: "Largest first" },
   },
 ];

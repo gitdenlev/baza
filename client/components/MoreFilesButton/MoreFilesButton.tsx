@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BazaSpinner } from "@/components/Spinner/Spinner";
+import { BazaSpinner } from "@/components/BazaSpinner/BazaSpinner";
 
 interface MoreFilesButtonProps {
   onClick: () => void;
@@ -9,7 +9,7 @@ interface MoreFilesButtonProps {
 export const MoreFilesButton = ({ onClick, loading }: MoreFilesButtonProps) => {
   return (
     <Button className="mx-auto" onClick={onClick} disabled={loading}>
-      {loading ? <BazaSpinner /> : "Показати більше"}
+      {loading ? <BazaSpinner /> : "Show more"}
     </Button>
   );
 };

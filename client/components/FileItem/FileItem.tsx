@@ -4,7 +4,13 @@ import { File } from "./file.types";
 import { formatFileSize } from "@/utils/formatFileSize";
 import { formatFileDate } from "@/utils/formatFileDate";
 
-export const FileItem = ({ name, size, lastModified, etag }: File) => {
+export const FileItem = ({
+  name,
+  size,
+  lastModified,
+  etag,
+  objectName,
+}: File) => {
   return (
     <div className="group relative w-64 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:border-blue-500/50 cursor-pointer overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -37,7 +43,16 @@ export const FileItem = ({ name, size, lastModified, etag }: File) => {
           </div>
         </div>
       </div>
-      <FileActionModal />
+      <FileActionModal
+        file={{
+          name,
+          size,
+          lastModified,
+          etag,
+          objectName,
+          originalName: name,
+        }}
+      />
     </div>
   );
 };

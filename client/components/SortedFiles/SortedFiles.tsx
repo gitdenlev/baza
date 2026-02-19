@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -13,31 +13,36 @@ import {
 import { sortOptions, SortKey, OrderKey } from "@/constants/sorts";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 
-export function SortedFiles() {
-  const [sort, setSort] = useState<SortKey>("name");
-  const [order, setOrder] = useState<OrderKey>("desc");
+export interface SortedFilesProps {
+  sort: SortKey;
+  order: OrderKey;
+  onSortChange: (value: SortKey) => void;
+  onOrderChange: (value: OrderKey) => void;
+}
 
+export function SortedFiles({
+  sort,
+  order,
+  onSortChange,
+  onOrderChange,
+}: SortedFilesProps) {
   const current = useMemo(
     () => sortOptions.find((o) => o.value === sort)!,
     [sort],
   );
 
-  function handleSortChange(value: SortKey) {
-    setSort(value);
-  }
-
   return (
     <div className="flex items-center gap-2">
-      <Select value={sort} onValueChange={handleSortChange}>
+      <Select value={sort} onValueChange={(v) => onSortChange(v as SortKey)}>
         <SelectTrigger>
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4" />
-            <SelectValue placeholder="Сортувати за" />
+            <SelectValue placeholder="Sort by" />
           </div>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Сортувати за</SelectLabel>
+            <SelectLabel>Sort by</SelectLabel>
             {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -47,16 +52,16 @@ export function SortedFiles() {
         </SelectContent>
       </Select>
 
-      <Select value={order} onValueChange={(v: OrderKey) => setOrder(v)}>
+      <Select value={order} onValueChange={(v) => onOrderChange(v as OrderKey)}>
         <SelectTrigger>
           <div className="flex items-center gap-2">
             <ArrowUpDown className="h-4 w-4" />
-            <SelectValue placeholder="Порядок сортування" />
+            <SelectValue placeholder="Sort order" />
           </div>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Порядок сортування</SelectLabel>
+            <SelectLabel>Sort order</SelectLabel>
             <SelectItem value="asc">{current.orders.asc}</SelectItem>
             <SelectItem value="desc">{current.orders.desc}</SelectItem>
           </SelectGroup>

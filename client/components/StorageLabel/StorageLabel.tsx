@@ -7,9 +7,11 @@ import { getStorageUsage } from "@/lib/file.api";
 import { formatFileSize } from "@/utils/formatFileSize";
 
 interface StorageUsage {
-  used: number;
-  limit: number;
-  percentage: number;
+  usedBytes: number;
+  trashBytes: number;
+  quotaBytes: number;
+  freeBytes: number;
+  percentUsed: number;
 }
 
 export const StorageLabel = () => {
@@ -44,22 +46,23 @@ export const StorageLabel = () => {
     <div className="w-full text-black">
       <div className="flex items-center gap-2">
         <Cloud className="w-4 h-4" />
-        <span className="text-sm">Сховище</span>
+        <span className="text-sm">Storage</span>
       </div>
 
       <div className="mt-1 space-y-2">
         <div className="flex items-end justify-between">
           <div>
             <p className="text-xs">
-              {formatFileSize(storage.used)} з {formatFileSize(storage.limit)}
+              {formatFileSize(storage.usedBytes)} used of{" "}
+              {formatFileSize(storage.quotaBytes)}
             </p>
           </div>
 
-          <span className="text-xs">{storage.percentage}%</span>
+          <span className="text-xs">{storage.percentUsed}%</span>
         </div>
 
         <Progress
-          value={storage.percentage}
+          value={storage.percentUsed}
           className="h-2 rounded-full bg-gray-200"
         />
       </div>

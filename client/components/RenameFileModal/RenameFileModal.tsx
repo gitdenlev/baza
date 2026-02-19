@@ -14,8 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { renameFile } from "@/lib/file.api";
-import { useRouter } from "next/navigation";
-import { BazaSpinner } from "../Spinner/Spinner";
+import { BazaSpinner } from "../BazaSpinner/BazaSpinner";
 
 interface RenameFileModalProps {
   file: FileMetadata;
@@ -30,7 +29,6 @@ export const RenameFileModal = ({
   onOpenChange,
   onRenamed,
 }: RenameFileModalProps) => {
-  const router = useRouter();
   const [newName, setNewName] = useState(file.name);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +44,6 @@ export const RenameFileModal = ({
       await renameFile(file, newName);
       onOpenChange(false);
       onRenamed?.();
-      router.refresh();
     } catch (error) {
       console.error(error);
     } finally {
@@ -58,9 +55,9 @@ export const RenameFileModal = ({
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Перейменувати файл</AlertDialogTitle>
+          <AlertDialogTitle>Rename file</AlertDialogTitle>
           <AlertDialogDescription>
-            Введіть нову назву для файлу.
+            Enter a new name for the file.
           </AlertDialogDescription>
           <Input
             value={newName}
@@ -69,7 +66,7 @@ export const RenameFileModal = ({
           />
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Скасувати</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
@@ -80,10 +77,10 @@ export const RenameFileModal = ({
             {loading ? (
               <span className="flex items-center gap-2">
                 <BazaSpinner />
-                Перейменовуємо
+                Renaming
               </span>
             ) : (
-              "Перейменувати"
+              "Rename"
             )}
           </AlertDialogAction>
         </AlertDialogFooter>
